@@ -8,12 +8,12 @@ const generateAccessAndRefreshTokens = async (userId) => {
   try {
     const user = await User.findById(userId);
 
-    const accessTooken = user.generateAccessToken();
+    const accessToken = user.generateAccessToken();
     const refreshToken = user.generateRefreshToken();
     user.refreshToken = refreshToken;
     await user.save({ validateBeforeSave: false });
 
-    return { accessTooken, refreshToken };
+    return { accessToken, refreshToken };
   } catch (error) {
     throw new ApiError(
       500,
@@ -35,7 +35,7 @@ const login = AsyncHandler(async (req, res, next) => {
   if (!isPasswordCorrect)
     throw new ApiError(400, "incorrect email or password");
   console.log(user);
-  const { accessTooken, refreshToken } = await generateAccessAndRefreshTokens(
+  const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(
     user._id
   );
 
@@ -55,7 +55,7 @@ const login = AsyncHandler(async (req, res, next) => {
     .json(
       new ApiResponse(
         200,
-        { user: loggesInUser, accessTooken },
+        { user: loggesInUser, accessToken },
         "log in success"
       )
     );
@@ -117,9 +117,10 @@ const logout = AsyncHandler(async (req, res) => {
 });
 
 const refreshAccessToken = AsyncHandler(async (req, res) => {
-  const incomingRefreshToken = req.cookies.refreshToken || req.body.refreshToken;
+  const incomingRefreshToken =
+    req.cookies.refreshToken || req.body.refreshToken;
   if (!incomingRefreshToken) throw new ApiError(401, "Unauthorized Request");
- console.log(incomingRefreshToken)
+  console.log(incomingRefreshToken);
   try {
     const decodedToken = jwt.verify(
       incomingRefreshToken,
