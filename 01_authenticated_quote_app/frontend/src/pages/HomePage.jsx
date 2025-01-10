@@ -48,7 +48,10 @@ const HomePage = () => {
         }
         sessionStorage.removeItem("accessToken");
         setIsLoggedIn(false);
-        setError(error.response?.data?.message + " login again" || "Authentication error:");
+        // setError(
+        //   error.response?.data?.message + " login again" ||
+        //     "Authentication error:"
+        // );
       }
     };
 
