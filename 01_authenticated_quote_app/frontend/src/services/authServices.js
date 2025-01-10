@@ -1,47 +1,49 @@
-import axios from "axios";
+import { generalApi } from "./api";
 
-const url = import.meta.env.VITE_SERVER_URI;
+const baseEndpoint = "/user";
 
-const config = {
-  headers: {
-    "Content-Type": "application/json",
-  },
-  withCredentials: true,
-};
-
+// Service for user signup
 export const signupService = async (data) => {
   try {
-    const response = await axios.post(`${url}/user/signup`, data);
+    const response = await generalApi.post(`${baseEndpoint}/signup`, data);
     return response;
   } catch (error) {
-    console.log("service", error);
+    console.error("Signup error:", error.message);
     throw error;
   }
 };
 
+// Service for user login
 export const loginService = async (data) => {
   try {
-    const response = await axios.post(`${url}/user/login`, data, config);
-    sessionStorage.removeItem('accessToken')
-    const accessToken = response.data.data.accessToken
-    sessionStorage.setItem('accessToken', accessToken)
+    const response = await generalApi.post(`${baseEndpoint}/login`, data);
+
+    // Handle token storage
+    const accessToken = response?.data?.data?.accessToken;
+    if (accessToken) {
+      sessionStorage.setItem("accessToken", accessToken);
+    } else {
+      console.warn("No access token found in login response");
+    }
     return response;
   } catch (error) {
-    console.error("Login error", error);
+    console.error("Login error:", error.message);
     throw error;
   }
 };
 
+// Service for user logout
 export const logoutService = async () => {
   try {
-    const response = await axios.post(`${url}/user/logout`, {
-      withCredentials: true,
-    });
-    sessionStorage.clear()
-    window.location.href = "/login"
+    const response = await generalApi.post(`${baseEndpoint}/logout`);
+
+    // Clear session storage and redirect
+    sessionStorage.clear();
+    window.location.href = "/login";
+
     return response;
   } catch (error) {
-    console.log(error);
+    console.error("Logout error:", error.message);
     throw error;
   }
 };

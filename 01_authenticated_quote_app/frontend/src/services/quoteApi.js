@@ -1,13 +1,12 @@
-import interceptedAxios from "./interceptedAxios";
-
+import { interceptedApi } from "./api";
 
 export const getQuote = async () => {
-try {
-    const response = await interceptedAxios.get("/quote")
-    return response
-    console.log(response)
-} catch (error) {
-    console.error(error)
-    throw error
-}
-}
+  try {
+    const response = await interceptedApi.get("/quote");
+    console.log(response);
+    return response;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
