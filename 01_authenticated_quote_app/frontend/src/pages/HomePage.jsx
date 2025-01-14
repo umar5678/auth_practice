@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { jwtDecode } from "jwt-decode";
 import Container from "../components/Container";
 import { getQuote } from "../services/quoteApi";
 import { Link } from "react-router-dom";
@@ -14,44 +15,53 @@ const HomePage = () => {
     const initializeAuthState = async () => {
       try {
         const token = sessionStorage.getItem("accessToken");
+        console.log("this is token: ", token);
         setError("");
 
         if (token) {
-          // If token exists, set isLoggedIn and attempt a refresh
+          try {
+            const decodedToken = jwtDecode(token);
+            const currentTime = Date.now() / 1000;
+
+            if (decodedToken.exp > currentTime) {
+              setIsLoggedIn(true);
+              console.log("token is valid and returning");
+              return; // Token is valid, exit early
+            }
+          } catch (decodeError) {
+            // Token decoding error, remove invalid token
+            console.error("Token decoding error:", decodeError);
+            sessionStorage.removeItem("accessToken");
+          }
+        }
+
+        // Only reach here if no token or token is expired/invalid
+        try {
           const response = await generalApi.post("/user/refresh-token");
           const newAccessToken = response.data?.data?.accessToken;
-
+          console.log("token refreshed: ", newAccessToken);
           if (newAccessToken) {
+            sessionStorage.removeItem("accessToken");
             sessionStorage.setItem("accessToken", newAccessToken);
             setIsLoggedIn(true);
           } else {
+            // Refresh failed, clear token and set logged out
             sessionStorage.removeItem("accessToken");
             setIsLoggedIn(false);
+            setError("Session expired. Please log in again."); // Set the error
           }
-        } else {
-          // Attempt to refresh even without a token in sessionStorage
-          const response = await generalApi.post("/user/refresh-token");
-          const newAccessToken = response.data?.data?.accessToken;
-
-          if (newAccessToken) {
-            sessionStorage.setItem("accessToken", newAccessToken);
-            setIsLoggedIn(true);
-          } else {
-            setIsLoggedIn(false);
-          }
+        } catch (refreshError) {
+          // Handle refresh error, clear token and set logged out
+          console.error("Error refreshing token:", refreshError);
+          sessionStorage.removeItem("accessToken");
+          setIsLoggedIn(false);
+          setError("Session expired. Please log in again."); // Set the error
         }
-      } catch (error) {
-        if (error.response?.status === 401) {
-          console.error("Authentication error:", error);
-        } else {
-          console.error("Network or other error:", error);
-        }
+      } catch (overallError) {
+        console.error("Overall authentication error:", overallError);
         sessionStorage.removeItem("accessToken");
         setIsLoggedIn(false);
-        // setError(
-        //   error.response?.data?.message + " login again" ||
-        //     "Authentication error:"
-        // );
+        setError("An unexpected error occurred. Please try again.");
       }
     };
 
