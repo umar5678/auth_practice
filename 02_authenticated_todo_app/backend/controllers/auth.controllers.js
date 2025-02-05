@@ -7,17 +7,12 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken";
 
 const getAccessAndRefreshTokens = async (userId) => {
-  console.log("user Id to get Tokens: ", userId)
   const user = await User.findById(userId);
-
 
   if (!user) throw new ApiError(404, "User not found");
 
   const accessToken = user.generateAccessToken();
   const refreshToken = user.generateRefreshToken();
-
-  console.log("access: ", accessToken)
-  console.log("refresh: ", refreshToken);
 
   user.refreshToken = refreshToken;
   await user.save({ validateBeforeSave: false });
@@ -90,7 +85,7 @@ const login = AsyncHandler(async (req, res) => {
     throw new ApiError(
       400,
       "You have previously registered using " +
-        usexistedUserer.loginType?.toLowerCase() +
+        existedUser.loginType?.toLowerCase() +
         ". Please use the " +
         existedUser.loginType?.toLowerCase() +
         " login option to access your account."
@@ -190,7 +185,9 @@ const handleSocialLogin = AsyncHandler(async (req, res) => {
 
   // console.log(user)
 
-  const { accessToken, refreshToken } = await getAccessAndRefreshTokens(user._id);
+  const { accessToken, refreshToken } = await getAccessAndRefreshTokens(
+    user._id
+  );
 
   console.log("access Token:", accessToken);
   console.log("refresh token : ", refreshToken);
