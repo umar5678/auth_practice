@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { signupService } from "../services/authServices";
 import Loader from "../components/Loader";
+import SSOLogin from "../components/SSOLogin";
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -35,6 +36,10 @@ const Signup = () => {
   return (
     <div>
       {error && <p className="text-red-500 text-center">{error}</p>}
+
+      <div>
+        <SSOLogin />
+      </div>
       <form onSubmit={handleSubmit} className="max-w-sm mx-auto">
         <div className="mb-5">
           <label

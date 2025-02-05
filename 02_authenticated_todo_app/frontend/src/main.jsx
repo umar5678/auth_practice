@@ -13,6 +13,7 @@ import {
   Dashboard,
   DashboaedPage,
 } from "./pages/index.js";
+import AuthCallback from "./components/AuthCallback.jsx";
 import Protected from "./components/Protected";
 
 import { AuthProvider } from "./context/AuthContext.jsx";
@@ -25,6 +26,7 @@ const router = createBrowserRouter([
       { path: "/", element: <Home /> },
       { path: "/login", element: <Login /> },
       { path: "signup", element: <Signup /> },
+      { path: "/auth/callback", element: <AuthCallback /> },
       {
         path: "/dashboard",
         element: (

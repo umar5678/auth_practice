@@ -1,3 +1,5 @@
+import dotenv from "dotenv";
+dotenv.config();
 import { User } from "../models/user.model.js";
 import { AsyncHandler } from "../utils/AsyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
@@ -5,12 +7,17 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken";
 
 const getAccessAndRefreshTokens = async (userId) => {
+  console.log("user Id to get Tokens: ", userId)
   const user = await User.findById(userId);
+
 
   if (!user) throw new ApiError(404, "User not found");
 
   const accessToken = user.generateAccessToken();
   const refreshToken = user.generateRefreshToken();
+
+  console.log("access: ", accessToken)
+  console.log("refresh: ", refreshToken);
 
   user.refreshToken = refreshToken;
   await user.save({ validateBeforeSave: false });
@@ -75,6 +82,19 @@ const login = AsyncHandler(async (req, res) => {
 
   if (!(await existedUser.isPasswordCorrect(password))) {
     throw new ApiError(401, "wrong credentials");
+  }
+
+  if (existedUser.loginType !== UserLoginType.EMAIL_PASSWORD) {
+    // If user is registered with some other method, we will ask him/her to use the same method as registered.
+    // This shows that if user is registered with methods other than email password, he/she will not be able to login with password. Which makes password field redundant for the SSO
+    throw new ApiError(
+      400,
+      "You have previously registered using " +
+        usexistedUserer.loginType?.toLowerCase() +
+        ". Please use the " +
+        existedUser.loginType?.toLowerCase() +
+        " login option to access your account."
+    );
   }
 
   const { accessToken, refreshToken } = await getAccessAndRefreshTokens(
@@ -157,4 +177,50 @@ const refreshAccessToken = AsyncHandler(async (req, res) => {
   } catch (error) {}
 });
 
-export { register, login, logout, verify, refreshAccessToken };
+// const handleSocialLogin = async (req, res) => {
+//   console.log("handle social login run");
+//   console.log("user: ", req.user);
+
+//   res.redirect(`${process.env.CLIENT_SSO_REDIRECT_URL}`);
+// };
+
+const handleSocialLogin = AsyncHandler(async (req, res) => {
+  const user = await User.findById(req.user?._id);
+  if (!user) throw new ApiError(404, "user not found");
+
+  // console.log(user)
+
+  const { accessToken, refreshToken } = await getAccessAndRefreshTokens(user._id);
+
+  console.log("access Token:", accessToken);
+  console.log("refresh token : ", refreshToken);
+
+  // Encode user data safely for URL
+  const userData = encodeURIComponent(
+    JSON.stringify({
+      userId: user._id,
+      name: user.fullName,
+      email: user.email,
+    })
+  );
+
+  return res
+    .status(301)
+    .cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "lax",
+    }) // Set refresh token in cookie
+    .redirect(
+      `${process.env.CLIENT_SSO_REDIRECT_URL}?accessToken=${accessToken}&user=${userData}`
+    );
+});
+
+export {
+  register,
+  login,
+  logout,
+  verify,
+  refreshAccessToken,
+  handleSocialLogin,
+};
