@@ -8,7 +8,7 @@ import { Outlet } from "react-router-dom";
 
 const App = () => {
   return (
-    <div className="container mx-auto py-4 px-3">
+    <div className=" mx-auto py-4">
       <NavBar />
       <div className="pt-4 mt-4">
 

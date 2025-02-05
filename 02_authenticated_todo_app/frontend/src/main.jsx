@@ -1,23 +1,52 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './App.jsx'
-import Home from "./pages/Home.jsx"
-import Todos from './pages/Todos.jsx'
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import "./index.css";
+import App from "./App.jsx";
+import {
+  Home,
+  Login,
+  Signup,
+  ProfilePage,
+  Todos,
+  AllTodos,
+  Dashboard,
+  DashboaedPage,
+} from "./pages/index.js";
+import Protected from "./components/Protected";
 
+import { AuthProvider } from "./context/AuthContext.jsx";
 
 const router = createBrowserRouter([
   {
-    path: '/', element: <App />, children: [
+    path: "/",
+    element: <App />,
+    children: [
       { path: "/", element: <Home /> },
-      {path: '/todos', element: <Todos/>}
-  ]}
-])
+      { path: "/login", element: <Login /> },
+      { path: "signup", element: <Signup /> },
+      {
+        path: "/dashboard",
+        element: (
+          <Protected>
+            <Dashboard />
+          </Protected>
+        ),
+        children: [
+          { path: "/dashboard", element: <DashboaedPage /> },
+          { path: "/dashboard/profile", element: <ProfilePage /> },
+          { path: "/dashboard/todos", element: <Todos /> },
+          { path: "/dashboard/all-todos", element: <AllTodos /> },
+        ],
+      },
+    ],
+  },
+]);
 
-
-createRoot(document.getElementById('root')).render(
+createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <RouterProvider router={router} />
-  </StrictMode>,
-)
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
+  </StrictMode>
+);

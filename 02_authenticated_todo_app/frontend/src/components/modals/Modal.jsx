@@ -19,14 +19,14 @@ const Modal = ({ isOpen, onClose, children, title }) => {
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-stone-900 bg-opacity-50 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-stone-900/80 backdrop-blur-sm"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
         >
           {/* Modal Content */}
           <motion.div
-            className="bg-white dark:bg-gray-7 rounded-lg p-6 w-full max-w-md shadow-lg"
+            className="bg-white dark:bg-gray-7  rounded-lg p-6 w-full max-w-md shadow-lg"
             initial={{ y: -50, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 50, opacity: 0 }}

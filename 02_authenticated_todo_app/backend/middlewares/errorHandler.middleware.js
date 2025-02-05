@@ -1,8 +1,8 @@
 import { ApiError } from "../utils/ApiError.js";
 
-const errorHandler = (err, req, res, next) => {
+const errorHandlerMiddleware = (err, req, res, next) => {
   let statusCode = err.statusCode || 500;
-  let message = err.message || "Internal server error";
+  let message = err.message || "internal server error";
   let errors = err.errors || [];
   let success = false;
 
@@ -12,7 +12,7 @@ const errorHandler = (err, req, res, next) => {
     message = err.message;
     errors = err.errors;
   } else {
-    console.error("Unhandled Error: ", err.message, err.stack);
+    console.log("unhandled error: ", err.message, err.stack);
   }
 
   res.status(statusCode).json({
@@ -22,4 +22,5 @@ const errorHandler = (err, req, res, next) => {
   });
 };
 
-export default errorHandler;
+
+export default errorHandlerMiddleware

@@ -6,54 +6,51 @@ import jwt from "jsonwebtoken";
 
 const userSchema = new Schema(
   {
-    firstName: {
-      type: String,
-      required: true,
+    fullName: { type: String, required: true },
+
+    email: { type: String, required: true, unique: true },
+
+    password: { type: String, required: true },
+
+    avatar: {
+      type: {
+        url: String,
+        localPath: String,
+      },
+      default: {
+        url: `https://media.istockphoto.com/id/2151669184/vector/vector-flat-illustration-in-grayscale-avatar-user-profile-person-icon-gender-neutral.jpg?s=612x612&w=0&k=20&c=UEa7oHoOL30ynvmJzSCIPrwwopJdfqzBs0q69ezQoM8=`,
+        localPath: "",
+      },
     },
-    lastName: {
-      type: String,
-    },
-    email: {
-      type: String,
-      required: true,
-      lowercase: true,
-      trim: true,
-      unique: [true, "email already exist"],
-    },
-    password: {
-      type: String,
-      required: [true, "Password is required"],
-    },
-    refreshToken: {
-      type: String,
-    },
+
+    role: { type: String, enum: ["user", "admin"], default: "user" },
+
+    refreshToken: { type: String },
+
+    isProfileSetupDone: { type: Boolean, default: false },
+
+    profile: { type: mongoose.Schema.Types.ObjectId, ref: "UserProfile" },
   },
   { timestamps: true }
 );
 
-// automatically encrypt password when a new user saves
-// in case of updating a user info, but password is not modified in those updates, then don't encrypt the password
-
 userSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) return next();
+  if (!this.isModified("password")) return;
+
   this.password = await bcrypt.hash(this.password, 10);
+
   next();
 });
-
-// verify password method
 
 userSchema.methods.isPasswordCorrect = async function (password) {
   return await bcrypt.compare(password, this.password);
 };
-
-// Generate access , client and refresh tokens
 
 userSchema.methods.generateAccessToken = function () {
   return jwt.sign(
     {
       _id: this._id,
       email: this.email,
-      firstName: this.firstName,
     },
     process.env.ACCESS_TOKEN_SECRET,
     { expiresIn: process.env.ACCESS_TOKEN_EXPIRY }
