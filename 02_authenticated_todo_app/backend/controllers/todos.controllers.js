@@ -6,7 +6,6 @@ import { Todo } from "../models/todo.model.js";
 
 const getAllTodos = AsyncHandler(async (req, res) => {
   const userId = req.user?._id;
-
   const todos = await Todo.find({ userId }).sort({ createdAt: -1 });
 
   res

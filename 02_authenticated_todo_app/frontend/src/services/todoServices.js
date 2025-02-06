@@ -12,7 +12,6 @@ const baseUrl = "/todos";
 // GET all Todos
 const getAllTodos = async () => {
   try {
-    console.log("client run");
     const response = await interceptedApi.get(baseUrl);
     return response.data; // Return response data
   } catch (error) {

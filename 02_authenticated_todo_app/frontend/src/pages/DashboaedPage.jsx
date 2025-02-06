@@ -4,8 +4,6 @@ import { useAuth } from "../context/AuthContext";
 const DashboaedPage = () => {
   const { auth } = useAuth();
 
-  console.log(auth.userData)
-
   return (
     <div>
       <h1>Dashboard Page</h1>

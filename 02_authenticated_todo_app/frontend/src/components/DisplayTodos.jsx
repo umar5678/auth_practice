@@ -15,7 +15,7 @@ const DisplayTodos = ({ todos, editTodo, deleteTodo, toggleComplete }) => {
 
   return (
     <div>
-      {todos.length > 0 ? (
+      {todos?.length > 0 ? (
         todos.map((todo) => (
           <div
             key={todo._id}

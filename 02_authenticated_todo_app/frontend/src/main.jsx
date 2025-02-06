@@ -17,6 +17,7 @@ import AuthCallback from "./components/AuthCallback.jsx";
 import Protected from "./components/Protected";
 
 import { AuthProvider } from "./context/AuthContext.jsx";
+import { TodoProvider } from "./context/TodoContext.jsx";
 
 const router = createBrowserRouter([
   {
@@ -33,7 +34,9 @@ const router = createBrowserRouter([
     path: "/dashboard",
     element: (
       <Protected>
-        <Dashboard />
+        <TodoProvider>
+          <Dashboard />
+        </TodoProvider>
       </Protected>
     ),
     children: [
