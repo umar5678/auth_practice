@@ -16,7 +16,7 @@ router
   .route("/:todoId")
   .get(verifyToken, getSingleTodo)
   .put(verifyToken, updateTodo)
-  .delete(verifyToken, deleteTodo);
- router.route("/:todoId/toggle").put(verifyToken, toggleTodoComplete)
+  .patch(verifyToken, toggleTodoComplete)
+  .delete(verifyToken, deleteTodo)
 
 export default router;

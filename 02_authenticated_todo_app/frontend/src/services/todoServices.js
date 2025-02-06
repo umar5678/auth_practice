@@ -55,7 +55,7 @@ const updateTodo = async (todoId, updatedData) => {
 
 const toggleTodoComplete = async (todoId) => {
   try {
-    const response = await interceptedApi.put(`${baseUrl}/${todoId}/toggle`);
+    const response = await interceptedApi.patch(`${baseUrl}/${todoId}`);
     return response.data;
   } catch (error) {
     throw error;
