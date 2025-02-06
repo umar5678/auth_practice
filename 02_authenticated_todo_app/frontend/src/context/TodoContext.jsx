@@ -4,7 +4,6 @@ import React, {
   useState,
   useEffect,
   useCallback,
-  Children,
 } from "react";
 
 import {
@@ -116,7 +115,6 @@ export const TodoProvider = ({ children }) => {
         toggleComplete,
         loading,
         error,
-        // fetchTodos,
       }}
     >
       {children}
