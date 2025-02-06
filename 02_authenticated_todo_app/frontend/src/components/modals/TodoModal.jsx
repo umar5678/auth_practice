@@ -37,6 +37,7 @@ const TodoModal = ({ isOpen, onClose, onSubmit, initialTodo, isEditing }) => {
           value={todo.title}
           onChange={(e) => handleChange(e.target.value)}
           label="Todo Title"
+          inputClasses="max-w-sm"
         />
         <div className="flex justify-between">
           <Button variant="primary-outline" className="mt-4" type="submit">

@@ -125,7 +125,7 @@ export const AuthProvider = ({ children }) => {
     getUserData();
   }, [auth.userId]);
 
-  return <AuthContext.Provider value={auth}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={{auth, setAuth}}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = () => useContext(AuthContext);

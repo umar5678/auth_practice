@@ -4,13 +4,13 @@ import Loader from "./Loader"
 
 const Protected = ({ children }) => {
 
-  const { isLoggedIn, loading } = useAuth() 
-  console.log(isLoggedIn, loading);
+  const { auth } = useAuth() 
+  console.log(auth.isLoggedIn, auth.loading);
 
 
-  if(loading) return <Loader/>
+  if(auth.loading) return <Loader/>
 
-  if (!isLoggedIn) {
+  if (!auth.isLoggedIn) {
     return <Navigate to="/login" />;
   }
 

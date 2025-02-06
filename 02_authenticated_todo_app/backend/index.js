@@ -31,10 +31,12 @@ import { notFound } from "./middlewares/notFound.middleware.js";
 import authRouter from "./routes/auth.routes.js";
 import profileRouter from "./routes/profile.routes.js";
 import userRouter from "./routes/user.routes.js";
+import todoRouter from "./routes/todos.routes.js"
 
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/user/auth", authRouter);
 app.use("/api/v1/user/profile", profileRouter);
+app.use("/api/v1/todos", todoRouter)
 
 app.use(errorHandlerMiddleware);
 app.use(notFound);

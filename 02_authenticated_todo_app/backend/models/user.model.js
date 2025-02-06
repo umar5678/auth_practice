@@ -36,6 +36,8 @@ const userSchema = new Schema(
 
     isProfileSetupDone: { type: Boolean, default: false },
 
+    todos: { type: mongoose.Schema.Types.ObjectId, ref: "Todo"},
+
     profile: { type: mongoose.Schema.Types.ObjectId, ref: "UserProfile" },
   },
   { timestamps: true }

@@ -122,9 +122,6 @@ const logout = AsyncHandler(async (req, res) => {
 });
 
 const verify = AsyncHandler(async (req, res, next) => {
-  // get user from req.user
-  // find user in db
-  // return user
 
   const user = await User.findById(req.user._id).select(
     "-password -refreshToken"
@@ -172,12 +169,6 @@ const refreshAccessToken = AsyncHandler(async (req, res) => {
   } catch (error) {}
 });
 
-// const handleSocialLogin = async (req, res) => {
-//   console.log("handle social login run");
-//   console.log("user: ", req.user);
-
-//   res.redirect(`${process.env.CLIENT_SSO_REDIRECT_URL}`);
-// };
 
 const handleSocialLogin = AsyncHandler(async (req, res) => {
   const user = await User.findById(req.user?._id);
@@ -189,17 +180,14 @@ const handleSocialLogin = AsyncHandler(async (req, res) => {
     user._id
   );
 
-  console.log("access Token:", accessToken);
-  console.log("refresh token : ", refreshToken);
-
-  // Encode user data safely for URL
-  const userData = encodeURIComponent(
-    JSON.stringify({
-      userId: user._id,
-      name: user.fullName,
-      email: user.email,
-    })
-  );
+  // // Encode user data safely for URL
+  // const userData = encodeURIComponent(
+  //   JSON.stringify({
+  //     userId: user._id,
+  //     name: user.fullName,
+  //     email: user.email,
+  //   })
+  // );
 
   return res
     .status(301)
@@ -209,7 +197,7 @@ const handleSocialLogin = AsyncHandler(async (req, res) => {
       sameSite: "lax",
     }) // Set refresh token in cookie
     .redirect(
-      `${process.env.CLIENT_SSO_REDIRECT_URL}?accessToken=${accessToken}&user=${userData}`
+      `${process.env.CLIENT_SSO_REDIRECT_URL}?accessToken=${accessToken}`
     );
 });
 

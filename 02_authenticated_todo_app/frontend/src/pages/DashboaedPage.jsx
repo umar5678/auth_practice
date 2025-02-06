@@ -2,15 +2,15 @@ import React from "react";
 import { useAuth } from "../context/AuthContext";
 
 const DashboaedPage = () => {
-  const { userId, userData } = useAuth();
+  const { auth } = useAuth();
 
-  console.log(userData)
+  console.log(auth.userData)
 
   return (
     <div>
       <h1>Dashboard Page</h1>
-      <p>User id: {userId ? userId : ""}</p>
-      <p>User email: {userData?.email}</p>
+      <p>User id: {auth.userId ? auth.userId : ""}</p>
+      <p>User email: {auth.userData?.email}</p>
     </div>
   );
 };
