@@ -7,6 +7,7 @@ import {
   getAllTodos,
   createTodo,
   getSingleTodo,
+  toggleTodoComplete,
   updateTodo,
   deleteTodo,
 } from "../services/todoServices";
@@ -22,7 +23,6 @@ const useTodoManager = () => {
 
   useEffect(() => {
     const fetchTodo = async () => {
-      console.log("cilent effect run");
       setLoading(true);
       try {
         const data = await getAllTodos();
@@ -41,11 +41,9 @@ const useTodoManager = () => {
     setLoading(true);
     try {
       const createdTodo = await createTodo(newTodo);
-      console.log(createdTodo.data);
       const myTodo = createdTodo.data;
 
       setTodos((prev) => [...prev, { ...myTodo }]);
-      console.log(todos);
     } catch (error) {
       console.error(error);
       setError("Create Todo Error");
@@ -58,7 +56,6 @@ const useTodoManager = () => {
     setLoading(true);
     try {
       const updatedTodoData = await updateTodo(todoId, updatedTodo);
-      console.log("updated Todo data: ", updatedTodoData.data);
       const myTodo = updatedTodoData.data;
       setTodos((prev) =>
         prev.map((todo) =>
@@ -91,30 +88,24 @@ const useTodoManager = () => {
     // setTodos((prevTodos) => prevTodos.filter((_, idx) => idx !== index));
   }, []);
 
-  const toggleComplete = useCallback(
-    async (todoId, updatedTodoData) => {
-      // Receive updatedTodoData
-      setLoading(true);
-      try {
-        const response = await updateTodo(todoId, updatedTodoData); // No need to construct updatedTodo here
-        const updatedTodoFromApi = response.data;
-
-        setTodos((prevTodos) =>
-          prevTodos.map(
-            (todo) => (todo._id === todoId ? updatedTodoFromApi : todo) // Update with API data
-          )
-        );
-      } catch (error) {
-        console.error("toggle todo error: ", error);
-        // Revert UI change on error (optional)
-        // ... (revert logic, same as before)
-      } finally {
-        setLoading(false);
-      }
-    },
-    [updateTodo]
-  ); // Remove todos from dependency array
-
+  const toggleComplete = useCallback(async (todoId) => {
+    setLoading(true);
+    try {
+      const response = await toggleTodoComplete(todoId);
+      const updatedTodoFromApi = response.data;
+      setTodos((prevTodos) =>
+        prevTodos.map((todo) =>
+          todo._id === todoId
+            ? { ...todo, isCompleted: updatedTodoFromApi.isCompleted }
+            : todo
+        )
+      );
+    } catch (error) {
+      console.error("toggle todo error: ", error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
   return {
     todos,
     addTodo,
@@ -160,7 +151,6 @@ const Todos = () => {
 
   const initialTodo = todos.find((todo) => todo._id === editingTodoId) || null;
 
-  console.log(todos);
 
   return (
     <div>

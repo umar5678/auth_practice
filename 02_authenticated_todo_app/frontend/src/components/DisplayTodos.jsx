@@ -1,17 +1,8 @@
-import Modal from "./modals/Modal";
 import Button from "./ui/Button";
-import LoadingScreen from "./LoadingScreen";
-import { useState } from "react";
 
 const DisplayTodos = ({ todos, editTodo, deleteTodo, toggleComplete }) => {
   const handleToggleComplete = (todoId) => {
-    // Receive only the todoId
-    const todo = todos.find((t) => t._id === todoId); // Get the latest todo from the todos state
-    if (!todo) return; // Important check in case todo is not found
-
-    const updatedTodo = { ...todo, isCompleted: !todo.isCompleted };
-    console.log(updatedTodo); // Now this should be correct!
-    toggleComplete(todoId, updatedTodo);
+    toggleComplete(todoId);
   };
 
   const handleEditTodo = (id) => {
@@ -21,9 +12,6 @@ const DisplayTodos = ({ todos, editTodo, deleteTodo, toggleComplete }) => {
   const handleDeleteTodo = (id) => {
     deleteTodo(id);
   };
-
-  // const [loading, setLoading] = useState(false);
-  // const [loading, setLoading] = useState(true);
 
   return (
     <div>

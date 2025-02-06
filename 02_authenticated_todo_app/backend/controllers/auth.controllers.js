@@ -122,7 +122,6 @@ const logout = AsyncHandler(async (req, res) => {
 });
 
 const verify = AsyncHandler(async (req, res, next) => {
-
   const user = await User.findById(req.user._id).select(
     "-password -refreshToken"
   );
@@ -168,7 +167,6 @@ const refreshAccessToken = AsyncHandler(async (req, res) => {
       .json(new ApiResponse(200, { accessToken }, "Access token refreshed"));
   } catch (error) {}
 });
-
 
 const handleSocialLogin = AsyncHandler(async (req, res) => {
   const user = await User.findById(req.user?._id);

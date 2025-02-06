@@ -1,20 +1,18 @@
 import { interceptedApi } from "./api"; // it uses axios api
 
-
 // /api/v1/todos GET
 // /api/v1/todos POST
 // /api/v1/todos/:todoId GET
-// /api/v1/todos/:todoId POST update
+// /api/v1/todos/:todoId PUT update
+// /api/v1/todos/:todoId/toggle PUT toggle
 // /api/v1/todos/:todoId DELETE
 
- 
-
-const baseUrl = "/todos"
+const baseUrl = "/todos";
 
 // GET all Todos
 const getAllTodos = async () => {
-    try {
-      console.log("client run")
+  try {
+    console.log("client run");
     const response = await interceptedApi.get(baseUrl);
     return response.data; // Return response data
   } catch (error) {
@@ -45,10 +43,22 @@ const getSingleTodo = async (todoId) => {
 // UPDATE a Todo by ID
 const updateTodo = async (todoId, updatedData) => {
   try {
-    const response = await interceptedApi.put(`${baseUrl}/${todoId}`, updatedData);
+    const response = await interceptedApi.put(
+      `${baseUrl}/${todoId}`,
+      updatedData
+    );
     return response.data; // Return updated Todo
   } catch (error) {
     throw error; // Handle errors accordingly
+  }
+};
+
+const toggleTodoComplete = async (todoId) => {
+  try {
+    const response = await interceptedApi.put(`${baseUrl}/${todoId}/toggle`);
+    return response.data;
+  } catch (error) {
+    throw error;
   }
 };
 
@@ -62,7 +72,11 @@ const deleteTodo = async (todoId) => {
   }
 };
 
-
-
-
-export {getAllTodos, createTodo, getSingleTodo, updateTodo, deleteTodo}
+export {
+  getAllTodos,
+  createTodo,
+  getSingleTodo,
+  updateTodo,
+  deleteTodo,
+  toggleTodoComplete,
+};

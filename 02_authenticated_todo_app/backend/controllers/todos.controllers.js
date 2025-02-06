@@ -50,13 +50,12 @@ const updateTodo = AsyncHandler(async (req, res) => {
   if (!title || title.trim() === "") {
     throw new ApiError(400, "Title is required");
   }
-console.log(isCompleted)
   let todo = await Todo.findOne({ _id: todoId, userId });
   if (!todo) throw new ApiError(404, "Todo not found");
 
   todo.title = title || todo.title;
 
-  todo.isCompleted = isCompleted || todo.isCompleted;
+  todo.isCompleted = isCompleted ?? todo.isCompleted;
 
   await todo.save();
   const updatedTodo = await Todo.findById(todo._id);
@@ -77,4 +76,34 @@ const deleteTodo = AsyncHandler(async (req, res) => {
   res.status(200).json(new ApiResponse(200, null, "Todo Deleted Successfully"));
 });
 
-export { getAllTodos, createTodo, getSingleTodo, updateTodo, deleteTodo };
+const toggleTodoComplete = AsyncHandler(async (req, res) => {
+  const todoId = req.params.todoId;
+
+  // get todo object
+
+  const todo = await Todo.findById(todoId); // First, fetch the todo
+
+  if (!todo) {
+    throw new ApiError(404, "Todo not found");
+  }
+  const updatedTodo = await Todo.findByIdAndUpdate(
+    todoId,
+    { $set: { isCompleted: !todo.isCompleted } }, // Toggle the value
+    { new: true, runValidators: true }
+  );
+
+  if (!updatedTodo) {
+    throw new ApiError(404, "Todo not found (after update)"); // Check again
+  }
+
+  res.status(200).json(new ApiResponse(200, updatedTodo, "Todo Toggled"));
+});
+
+export {
+  getAllTodos,
+  createTodo,
+  getSingleTodo,
+  updateTodo,
+  deleteTodo,
+  toggleTodoComplete,
+};

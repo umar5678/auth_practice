@@ -8,6 +8,7 @@ import {
   getSingleTodo,
   updateTodo,
   deleteTodo,
+  toggleTodoComplete,
 } from "../controllers/todos.controllers.js";
 
 router.route("/").get(verifyToken, getAllTodos).post(verifyToken, createTodo);
@@ -16,5 +17,6 @@ router
   .get(verifyToken, getSingleTodo)
   .put(verifyToken, updateTodo)
   .delete(verifyToken, deleteTodo);
+ router.route("/:todoId/toggle").put(verifyToken, toggleTodoComplete)
 
 export default router;
